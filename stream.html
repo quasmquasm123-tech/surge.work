@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Live Stream - SportStreams</title>
+    <meta name="description"
+        content="Watch live sports stream in HD - NFL, NBA, Soccer, and more. Updated daily with ESPN schedule and TopEmbed links." />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", "Segoe UI", sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at top, #0b132b, #000);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .stream-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 15px 60px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            color: #ff6b35;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: fadeInDown 1s ease;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                transform: translateY(-15px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Ads */
+        .ad-top,
+        .ad-bottom {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #aaa;
+            text-align: center;
+            padding: 12px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-size: 0.9rem;
+            transition: 0.3s;
+            overflow: hidden;
+        }
+
+        .ad-top:hover,
+        .ad-bottom:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Player Layout */
+        .player-area {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .side-ad {
+            flex: 0 0 160px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #bbb;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: 0.3s;
+            min-height: 100px;
+        }
+
+        .side-ad:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .stream-player {
+            flex: 1;
+            min-width: 300px;
+            height: 600px;
+            border-radius: 15px;
+            background: #000;
+            box-shadow: 0 0 20px rgba(255, 107, 53, 0.3);
+            overflow: hidden;
+            transition: 0.4s ease;
+            position: relative;
+        }
+
+        .stream-player iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .stream-player:hover {
+            box-shadow: 0 0 25px rgba(255, 107, 53, 0.6);
+        }
+
+        /* Stream Info */
+        .stream-info {
+            background: rgba(255, 255, 255, 0.06);
+            padding: 1.5rem;
+            border-radius: 12px;
+            backdrop-filter: blur(6px);
+            margin-top: 2rem;
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .stream-info h2 {
+            color: #ff6b35;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .stream-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .meta-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.8rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .meta-label {
+            font-size: 0.85rem;
+            color: #b0b7c8;
+            margin-bottom: 0.3rem;
+        }
+
+        .meta-value {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .status-live {
+            color: #00ff00;
+        }
+
+        .status-upcoming {
+            color: #ffa726;
+        }
+
+        .back-btn {
+            display: inline-block;
+            padding: 10px 25px;
+            background: #ff6b35;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            margin-top: 2rem;
+            transition: 0.3s;
+        }
+
+        .back-btn:hover {
+            background: #ff8e62;
+            transform: scale(1.05);
+        }
+
+        /* Responsive Fixes */
+        @media (max-width: 992px) {
+            .stream-player {
+                height: 450px;
+            }
+
+            .side-ad {
+                flex: 1 1 100%;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .stream-player {
+                height: 320px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .ad-top,
+            .ad-bottom {
+                font-size: 0.8rem;
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .stream-player {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="stream-container">
+        <div class="header">
+            <h1 id="page-title">Live Stream</h1>
+        </div>
+
+        <div class="ad-top">
+            🔸
+            <script type="text/javascript">
+                atOptions = {
+                    'key': 'abb0663c144067f9d6ac13c0778a9976',
+                    'format': 'iframe',
+                    'height': 90,
+                    'width': 728,
+                    'params': {}
+                };
+            </script>
+            <script type="text/javascript"
+                src="//contemplatewaryheadquarter.com/abb0663c144067f9d6ac13c0778a9976/invoke.js"></script>
+            🔸
+        </div>
+
+        <div class="player-area">
+            <div class="side-ad">
+                <script type="text/javascript">
+                    atOptions = {
+                        'key': '5a402370de4c5b007a3e5504876dec91',
+                        'format': 'iframe',
+                        'height': 300,
+                        'width': 160,
+                        'params': {}
+                    };
+                </script>
+                <script type="text/javascript"
+                    src="//contemplatewaryheadquarter.com/5a402370de4c5b007a3e5504876dec91/invoke.js"></script>
+            </div>
+
+            <div class="stream-player" id="stream-iframe">
+                <div
+                    style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;color:white;">
+                    <h3>Loading Stream...</h3>
+                    <p>Please wait while we load your live match</p>
+                </div>
+            </div>
+
+            <div class="side-ad">
+                <script type="text/javascript">
+                    atOptions = {
+                        'key': 'ba1b8945cf8f8d64efc2b4674ed5d2f8',
+                        'format': 'iframe',
+                        'height': 600,
+                        'width': 160,
+                        'params': {}
+                    };
+                </script>
+                <script type="text/javascript"
+                    src="//contemplatewaryheadquarter.com/ba1b8945cf8f8d64efc2b4674ed5d2f8/invoke.js"></script>
+            </div>
+        </div>
+
+        <div class="ad-bottom">
+            🔸
+            <script type="text/javascript">
+                atOptions = {
+                    'key': 'ec394d79292a39b3444dc047ece9ba03',
+                    'format': 'iframe',
+                    'height': 60,
+                    'width': 468,
+                    'params': {}
+                };
+            </script>
+            <script type="text/javascript"
+                src="//contemplatewaryheadquarter.com/ec394d79292a39b3444dc047ece9ba03/invoke.js"></script>
+            🔸
+        </div>
+
+        <div class="stream-info">
+            <h2 id="event-title">Event Information</h2>
+            <div class="stream-meta">
+                <div class="meta-item">
+                    <div class="meta-label">Time</div>
+                    <div class="meta-value" id="event-time">Loading...</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">League</div>
+                    <div class="meta-value" id="event-league">Loading...</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Status</div>
+                    <div class="meta-value" id="event-status">Loading...</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Channel</div>
+                    <div class="meta-value" id="event-channel">Loading...</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Quality</div>
+                    <div class="meta-value" id="event-quality">HD</div>
+                </div>
+            </div>
+        </div>
+
+        <a href="index.html" class="back-btn">← Back to Events</a>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const streamId = urlParams.get('id'); // new: read localStorage key id
+
+        let eventData = null;
+
+        // ✅ Try to load from localStorage first
+        if (streamId && localStorage.getItem(streamId)) {
+            try {
+                eventData = JSON.parse(localStorage.getItem(streamId));
+                console.log("✅ Loaded stream data from localStorage:", eventData);
+            } catch (err) {
+                console.error("❌ Failed to parse stream data:", err);
+            }
+        }
+
+        // ✅ Fallback: if no localStorage data, use URL params
+        if (!eventData) {
+            eventData = {
+                title: decodeURIComponent(urlParams.get('title') || 'Live Sports Event'),
+                channelName: decodeURIComponent(urlParams.get('channelName') || ''),
+                embedUrl: decodeURIComponent(urlParams.get('embedUrl') || ''),
+                time: decodeURIComponent(urlParams.get('time') || 'Time TBD ET'),
+                league: decodeURIComponent(urlParams.get('league') || 'Sports'),
+                status: decodeURIComponent(urlParams.get('status') || 'upcoming'),
+                quality: decodeURIComponent(urlParams.get('quality') || 'HD')
+            };
+            console.log("⚠️ Fallback to URL parameters:", eventData);
+        }
+
+        // ✅ Update page content
+        document.getElementById('page-title').textContent = eventData.title;
+        document.getElementById('event-title').textContent = eventData.title;
+        document.getElementById('event-time').textContent = eventData.time;
+        document.getElementById('event-league').textContent = eventData.league;
+        document.getElementById('event-channel').textContent = eventData.channelName;
+        document.getElementById('event-quality').textContent = eventData.quality;
+
+        const statusElement = document.getElementById('event-status');
+        statusElement.textContent = eventData.status.toUpperCase();
+        statusElement.className = `meta-value status-${eventData.status}`;
+
+        // ✅ Load Stream
+        function loadStream() {
+            const streamContainer = document.getElementById('stream-iframe');
+            if (eventData.embedUrl && eventData.embedUrl !== '') {
+                const iframe = document.createElement('iframe');
+                iframe.src = eventData.embedUrl;
+                iframe.width = '100%';
+                iframe.height = '100%';
+                iframe.frameBorder = '0';
+                iframe.allowFullscreen = true;
+                iframe.style.border = 'none';
+                iframe.allow = 'encrypted-media; autoplay; fullscreen';
+                streamContainer.innerHTML = '';
+                streamContainer.appendChild(iframe);
+            } else {
+                streamContainer.innerHTML = `
+                <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#1a1a1a;color:white;flex-direction:column;">
+                    <h3>Stream Not Available</h3>
+                    <p>This channel is currently offline</p>
+                    <p style="margin-top:20px;color:#ff6b35;">Please try another channel</p>
+                    <a href="index.html" style="margin-top:15px;padding:10px 20px;background:#ff6b35;color:white;text-decoration:none;border-radius:5px;">
+                        Back to Events
+                    </a>
+                </div>
+            `;
+            }
+        }
+
+        window.addEventListener('load', loadStream);
+    </script>
+
+</body>
+
+</html>
